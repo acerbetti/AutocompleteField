@@ -218,8 +218,6 @@ import UIKit
         
         if suggestionToReturn != nil
         {
-            suggestion = suggestionToReturn
-            
             return suggestionToReturn!
         }
 
@@ -235,7 +233,7 @@ import UIKit
         {
             let _suggestion = possibleSuggestions[0] // Found
             
-//            suggestion = _suggestion // self.suggestion has the real value
+            suggestion = _suggestion // self.suggestion has the real value
             
             var suggestionToReturn = searchTerm
             suggestionToReturn = suggestionToReturn + _suggestion.substringWithRange(Range<String.Index>(start: _suggestion.startIndex.advancedBy(searchTerm.characters.count), end: _suggestion.endIndex))

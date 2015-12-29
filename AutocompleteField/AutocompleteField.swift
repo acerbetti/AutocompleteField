@@ -29,6 +29,9 @@ public enum AutocompleteType {
     // Array of suggestions
     public var suggestions : [String] = [""]
     
+    // Array of suggestions with high priority
+    public var preferredSuggestions : [String] = [String]()
+    
     // The current suggestion shown. Can also be used to force a suggestion
     public var suggestion : String? {
         didSet {
@@ -207,23 +210,40 @@ public enum AutocompleteType {
      */
     private func suggestionToShow(searchTerm : String) -> String
     {
-        var returnString = ""
-        for suggestion in self.suggestions
+        var suggestionToReturn: String? = suggestionFound(inSuggestionList: preferredSuggestions, forSearchTerm: searchTerm)
+        if suggestionToReturn == nil
         {
-            // Search the suggestion array. User lowercase on both to get a match. 
-            // Also, if the match is exact we move on.
-            if( (suggestion != searchTerm) &&
-                 suggestion.lowercaseString.hasPrefix(searchTerm.lowercaseString))
-            {
-                var suggestionToReturn = searchTerm
-                suggestionToReturn = suggestionToReturn + suggestion.substringWithRange(Range<String.Index>(start: suggestion.startIndex.advancedBy(searchTerm.characters.count), end: suggestion.endIndex))
-
-                returnString = suggestionToReturn
-                break
-            }
+            suggestionToReturn = suggestionFound(inSuggestionList: suggestions, forSearchTerm: searchTerm)
         }
-        self.suggestion = returnString
-        return returnString
+        
+        if suggestionToReturn != nil
+        {
+            suggestion = suggestionToReturn
+            
+            return suggestionToReturn!
+        }
+
+        return ""
+    }
+    
+    private func suggestionFound(inSuggestionList list: [String], forSearchTerm searchTerm: String) -> String?
+    {
+        let matchPredicate = NSPredicate(format: "SELF != %@ AND SELF BEGINSWITH[c] %@", searchTerm, searchTerm)
+        
+        var possibleSuggestions = list.filter({ matchPredicate.evaluateWithObject($0) })
+        if possibleSuggestions.count > 0
+        {
+            let _suggestion = possibleSuggestions[0] // Found
+            
+//            suggestion = _suggestion // self.suggestion has the real value
+            
+            var suggestionToReturn = searchTerm
+            suggestionToReturn = suggestionToReturn + _suggestion.substringWithRange(Range<String.Index>(start: _suggestion.startIndex.advancedBy(searchTerm.characters.count), end: _suggestion.endIndex))
+            
+            return suggestionToReturn
+        }
+        
+        return nil
     }
     
     

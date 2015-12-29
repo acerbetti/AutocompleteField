@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 
-public enum AutocompleteType {
+@objc public enum AutocompleteType : Int { // To be able to use enum in Obj-C code. It cannot change anything in Swift side.
     case Word
     case Sentence
 }

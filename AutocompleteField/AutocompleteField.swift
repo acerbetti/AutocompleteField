@@ -242,7 +242,7 @@ import UIKit
         }
         else
         {
-            _suggestion =  ""
+            suggestion =  ""
         }
         
         return nil

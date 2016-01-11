@@ -240,6 +240,10 @@ import UIKit
             
             return suggestionToReturn
         }
+        else
+        {
+            _suggestion =  ""
+        }
         
         return nil
     }
